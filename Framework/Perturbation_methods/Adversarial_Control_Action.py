@@ -350,7 +350,9 @@ class Adversarial_Control_Action(perturbation_template):
 
         # Prepare data for adversarial attack (tensor/image prediction model)
         X, Y, positions_perturb, Y_Pred_iter_1, data_barrier = self._prepare_data_attack(X, Y)
-        
+        if img is not None:
+            img = torch.from_numpy(img).float().to(self.pert_model.device)
+            img_m_per_px = torch.from_numpy(img_m_per_px).float().to(self.pert_model.device)
         useful_agents = X.isfinite().all(-1).all(-1)
         X[~useful_agents] = torch.nan
         # Calculate initial control actions
@@ -380,7 +382,7 @@ class Adversarial_Control_Action(perturbation_template):
 
             # Split the adversarial position back to X and Y
             X_new, Y_new = Helper.return_data(adv_position, X, Y, self.future_action_included)
-
+            
             # Forward pass through the model
             Y_Pred = self.pert_model.predict_batch_tensor(X=X_new, T=T, S=S, C=C, 
                                                           img=img, img_m_per_px=img_m_per_px, graph = graph,

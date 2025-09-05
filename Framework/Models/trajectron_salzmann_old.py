@@ -481,6 +481,13 @@ class trajectron_salzmann_old(model_template):
         Types[T == 'M'] = 'VEHICLE'
         Types = Types.astype(str)
 
+        # Check for agents that do not exist
+        exists = torch.isfinite(X).any(-1).any(-1)
+        # Overwrite non existing agents with poistions outside the frame, to avoid nan backprop
+        X[~exists] = 1e6
+        if Y is not None:
+            Y[~exists] = 1e6
+
         # X = torch.from_numpy(X).to(dtype = torch.float32) #uncomment
         
         center_pos = X[:,0,-1]
@@ -565,9 +572,8 @@ class trajectron_salzmann_old(model_template):
         
 
         if img is not None:
-            img_batch = img[:,0,:,75:].astype(np.float32) / 255 # Cut of image behind VEHICLE'
-            img_batch = img_batch.transpose(0,3,1,2) # put channels first
-            img_batch = torch.from_numpy(img_batch).to(dtype = torch.float32)
+            img_batch = img[:,0,:,75:].float() / 255 # Cut of image behind VEHICLE'
+            img_batch = img_batch.permute(0,3,1,2) # put channels first
         else:
             img_batch = None
             
