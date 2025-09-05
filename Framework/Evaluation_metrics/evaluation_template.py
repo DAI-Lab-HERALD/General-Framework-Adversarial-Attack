@@ -733,7 +733,7 @@ class evaluation_template():
                         path_agent = path[agent_name]
 
                         # Assign the path
-                        Path_true_unperturbed[i_sample, i_agent] = path_agent
+                        Path_true_unperturbed[i_sample, i_agent] = path_agent[..., :2]
             Paths_true = [Path_true, Path_true_unperturbed]
         else:
             Paths_true = [Path_true]
