@@ -74,3 +74,11 @@ processing.py
 .python-version
 
 
+Framework/Results/RounD (roundabout)/Models/Roundabout--t0=fix_s_ss--dt=0.10_nI=12m12_nO=12m12_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch18.pt
+Framework/Results/RounD (roundabout)/Data/Roundabout--all_orig_paths_LLL.npy
+Framework/Results/RounD (roundabout)/Data/Roundabout--all_time_points_LLL.npy
+Framework/Results/RounD (roundabout)/Data/Roundabout--Images.npy
+Framework/Results/RounD (roundabout)/Data/Roundabout--SceneGraphs.npy
+Framework/Results/RounD (roundabout)/Models/Roundabout--t0=fix_s_ss--dt=0.10_nI=12m12_nO=12m12_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch24.pt
+Framework/Results/RounD (roundabout)/Models/Roundabout--t0=fix_s_ss--dt=0.10_nI=12m12_nO=12m12_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch30.pt
+Framework/Results/RounD (roundabout)/Models/Roundabout--t0=fix_s_ss--dt=0.10_nI=12m12_nO=12m12_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch6.pt
