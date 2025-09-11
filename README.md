@@ -5,6 +5,8 @@ This is a clone of [STEP](https://github.com/DAI-Lab-HERALD/General-Framework/tr
 
 The attacked model was initially trained by running [simulations_train.py](https://github.com/jhagenus/General-Framework-update-adversarial-Jeroen/blob/main/Framework/simulations_train.py). However, for the convivnience of the user, the resulting trained models (as well as the initial LGAP data set to be perturbed) are allready include in the [Results folder](https://github.com/jhagenus/General-Framework-update-adversarial-Jeroen/tree/main/Framework/Results/L-GAP%20(left%20turns)). 
 
-To generate the resulting metric values one can run [simulations_perturbation.py](https://github.com/jhagenus/General-Framework-update-adversarial-Jeroen/blob/main/Framework/simulations_perturbation.py) in general, and [simulations_perturbation_CR_FNC.py ](https://github.com/jhagenus/General-Framework-update-adversarial-Jeroen/blob/main/Framework/simulations_perturbation_CR_FNC.py) in particular for the calculation of the $CR_{FNC}$ metric. 
+To generate the resulting metric values one can run [simulations_perturbation.py](https://github.com/jhagenus/General-Framework-update-adversarial-Jeroen/blob/main/Framework/simulations_perturbation.py) in general, and [simulations_perturbation_CR_FNC.py ](https://github.com/jhagenus/General-Framework-update-adversarial-Jeroen/blob/main/Framework/simulations_perturbation_CR_FNC.py) in particular for the calculation of the $CR_{FNC}$ metric. The unperturbed values can be generated using [simulations_no_perturbation.py](https://github.com/jhagenus/General-Framework-update-adversarial-Jeroen/blob/main/Framework/simulations_no_perturbation.py).
+
+For the experiemnts on rounD, one hjas to use the similar files, just instead of *<filename>.py*, use *<filename>_rounD.py*.
 
 
