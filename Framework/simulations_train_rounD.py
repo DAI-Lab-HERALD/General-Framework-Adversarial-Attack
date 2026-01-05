@@ -18,7 +18,7 @@ Splitters = [{'Type': 'no_split', 'repetition': 0}]
 Models = ['trajectron_salzmann_old', 'adapt_aydemir']
 
 # Select the metrics to be used
-Metrics = ['ADE20_indep', 'FDE20_indep', 'Collision_rate_indep']
+Metrics = ['ADE20_indep']
 
 new_experiment.set_modules(Data_sets, Data_params, Splitters, Models, Metrics)
 
