@@ -3357,7 +3357,7 @@ class model_template():
         # Remove nan values
         self.Path_true[~self.Pred_step] = 0.0
         self.Path_true = self.Path_true[:,np.newaxis]
-        self.Path_true_past[~self.Pred_step] = 0.0
+        self.Path_true_past[~self.Pred_step.any(-1)] = 0.0
         
         # Get predicted trajectories
         self.Path_pred = np.zeros((self.num_samples_path_pred, num_samples,
