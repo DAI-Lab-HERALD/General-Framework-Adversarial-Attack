@@ -82,3 +82,20 @@ Framework/Results/RounD (roundabout)/Data/Roundabout--SceneGraphs.npy
 Framework/Results/RounD (roundabout)/Models/Roundabout--t0=fix_s_ss--dt=0.10_nI=12m12_nO=12m12_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch24.pt
 Framework/Results/RounD (roundabout)/Models/Roundabout--t0=fix_s_ss--dt=0.10_nI=12m12_nO=12m12_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch30.pt
 Framework/Results/RounD (roundabout)/Models/Roundabout--t0=fix_s_ss--dt=0.10_nI=12m12_nO=12m12_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch6.pt
+Framework/Results/L-GAP (left turns)/Data/.~lock.Lgap_lturn--t0=fix_s_ss--dt=0.10_nI=12m12_nO=12m12_IC--max_000--Perturbations.xlsx\#
+Framework/Figure_pert_impact.pdf
+Framework/Figure_pert_impact_highd.pdf
+Framework/Figure_pert_impact_round.pdf
+Framework/Results/HighD (Lane Change)/Data/HighD_LCGA--all_orig_paths_LLL.npy
+Framework/Results/HighD (Lane Change)/Data/HighD_LCGA--all_time_points_LLL.npy
+Framework/Results/HighD (Lane Change)/Data/HighD_LCGA--Images.npy
+Framework/Results/HighD (Lane Change)/Data/HighD_LCGA--SceneGraphs.npy
+Framework/Results/HighD (Lane Change)/Metric_figures/HighD_LCGA--t0=fix_s_ss--dt=0.20_nI=12m12_nO=25m25_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42--traj_plot_train_1.pdf
+Framework/Results/HighD (Lane Change)/Metric_figures/HighD_LCGA--t0=fix_s_ss--dt=0.20_nI=12m12_nO=25m25_IC--max_000--agents_0--identi_split_0_pert=0--t_pp_old_0_0--traj_plot_train_1.pdf
+Framework/Results/HighD (Lane Change)/Models/HighD_LCGA--t0=fix_s_ss--dt=0.20_nI=12m12_nO=25m25_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch12.pt
+Framework/Results/HighD (Lane Change)/Models/HighD_LCGA--t0=fix_s_ss--dt=0.20_nI=12m12_nO=25m25_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch18.pt
+Framework/Results/HighD (Lane Change)/Models/HighD_LCGA--t0=fix_s_ss--dt=0.20_nI=12m12_nO=25m25_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch24.pt
+Framework/Results/HighD (Lane Change)/Models/HighD_LCGA--t0=fix_s_ss--dt=0.20_nI=12m12_nO=25m25_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch30.pt
+Framework/Results/HighD (Lane Change)/Models/HighD_LCGA--t0=fix_s_ss--dt=0.20_nI=12m12_nO=25m25_IC--max_000--agents_0--identi_split_0_pert=0--ADAPT_seed42/state_epoch6.pt
+Framework/Results/HighD (Lane Change)/Models/HighD_LCGA--t0=fix_s_ss--dt=0.20_nI=12m12_nO=25m25_IC--max_000--agents_0--identi_split_0_pert=0--t_pp_old_0_0--train_loss.npy
+Framework/Results/HighD (Lane Change)/Models/HighD_LCGA--t0=fix_s_ss--dt=0.20_nI=12m12_nO=25m25_IC--max_000--agents_0--identi_split_0_pert=0--t_pp_old_0_0.npy
