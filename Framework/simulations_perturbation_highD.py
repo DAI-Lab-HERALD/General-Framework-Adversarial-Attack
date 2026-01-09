@@ -11,9 +11,6 @@ new_experiment = Experiment(Experiment_name)
 
 
 # Select the models to be trained
-Models = [{'model': 'trajectron_salzmann_old','kwargs': {'seed': 0, 'predict_ego': False}},
-          {'model': 'adapt_aydemir','kwargs': {'seed': 42}}]
-
 Models = [{'model': 'adapt_aydemir','kwargs': {'seed': 42}}]
 
 # Select the params for the datasets to be considered

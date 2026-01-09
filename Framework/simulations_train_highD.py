@@ -15,7 +15,7 @@ Data_params = [{'dt': 0.2, 'num_timesteps_in': (12,12), 'num_timesteps_out': (25
 Splitters = [{'Type': 'no_split', 'repetition': 0}]
 
 # Select the models to be trained
-Models = ['adapt_aydemir', 'trajectron_salzmann_old']
+Models = ['adapt_aydemir']
 
 # Select the metrics to be used
 Metrics = ['ADE20_indep']

@@ -9,7 +9,7 @@ new_experiment = Experiment(Experiment_name)
 
 #%% Select modules
 # Select the models to be trained
-Models = [{'model': 'trajectron_salzmann_old','kwargs': {'seed': 0, 'predict_ego': False}}, 'adapt_aydemir']
+Models = ['adapt_aydemir']
 
 # Select the params for the datasets to be considered
 Data_params = [{'dt': 0.2, 'num_timesteps_in': (12,12), 'num_timesteps_out': (25, 25)}]
