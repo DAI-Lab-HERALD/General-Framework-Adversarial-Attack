@@ -14,13 +14,15 @@ new_experiment = Experiment(Experiment_name)
 Models = [{'model': 'trajectron_salzmann_old','kwargs': {'seed': 0, 'predict_ego': False}},
           {'model': 'adapt_aydemir','kwargs': {'seed': 42}}]
 
+Models = [{'model': 'adapt_aydemir','kwargs': {'seed': 42}}]
+
 # Select the params for the datasets to be considered
-Data_params = [{'dt': 0.1, 'num_timesteps_in': (12,12), 'num_timesteps_out': (12, 12)}] 
+Data_params = [{'dt': 0.2, 'num_timesteps_in': (12,12), 'num_timesteps_out': (25, 25)}]
 
 # Select the datasets
 Data_sets = []
 preturbation = {'attack': None,
-                'data_set_dict': {'scenario': 'RounD_round_about',  'max_num_agents': None, 't0_type': 'col_set', 'conforming_t0_types': []},
+                'data_set_dict': {'scenario': 'HighD_lane_change',  'max_num_agents': None, 't0_type': 'col_set', 'conforming_t0_types': []},
                 'data_param': Data_params[0],
                 'splitter_dict': {'Type': 'no_split', 'repetition': 0, 'train_pert': False, 'test_pert': False},
                 'model_dict': Models[0],
@@ -52,16 +54,20 @@ for attack in ['Adversarial_Control_Action']:
                         if loss_function_2 is None:
                             continue
 
-                    # Define specific perturbation
-                    perturbation_i = copy.deepcopy(preturbation)
-                    perturbation_i['attack'] = attack
-                    perturbation_i['model_dict'] = attacked_model
-                    perturbation_i['loss_function_1'] = loss_function_1
-                    perturbation_i['loss_function_2'] = loss_function_2
-                    perturbation_i['barrier_function_past'] = barrier_function_past
-                    perturbation_i['barrier_function_future'] = barrier_function_future
-                    dataset = {'scenario': 'RounD_round_about',  'max_num_agents': None, 't0_type': 'col_set', 'conforming_t0_types': [], 'perturbation': perturbation_i}
-                    Data_sets.append(dataset)
+                    # Get different distance thresholds    
+                    for distance_threshold in [0.3, 0.6, 0.9]:
+                        # Define specific perturbation
+                        perturbation_i = copy.deepcopy(preturbation)
+                        perturbation_i['attack'] = attack
+                        perturbation_i['model_dict'] = attacked_model
+                        perturbation_i['distance_threshold_past'] = distance_threshold
+                        perturbation_i['distance_threshold_future'] = distance_threshold
+                        perturbation_i['loss_function_1'] = loss_function_1
+                        perturbation_i['loss_function_2'] = loss_function_2
+                        perturbation_i['barrier_function_past'] = barrier_function_past
+                        perturbation_i['barrier_function_future'] = barrier_function_future
+                        dataset = {'scenario': 'HighD_lane_change',  'max_num_agents': None, 't0_type': 'col_set', 'conforming_t0_types': [], 'perturbation': perturbation_i}
+                        Data_sets.append(dataset)
 
 # Select the spitting methods to be considered
 Splitters = [{'Type': 'no_split', 'repetition': 0, 'train_pert': False, 'test_pert': True}]
@@ -119,15 +125,28 @@ new_experiment.set_parameters(model_for_path_transform, num_samples_path_pred,
 
 # Load results
 Results = new_experiment.load_results()
-Results = Results.squeeze() # Should be 12 * 7
+
 import numpy as np
 np.set_printoptions(precision=3, suppress=True)
-print(Results.shape)
+Results = Results.squeeze() # Should be 18 * 2 * 7
+if len(Models) > 1:
+    # Extract attacked model
+    Results = Results.reshape(len(Models), -1, *Results.shape[1:])  # Should be 2 * 9 * 2 * 7
+    # Move evaluate model axis to 1
+    Results = Results.transpose(0, 2, 1, 3)  # Should be 2 * 2 * 9 * 7
+    # Over axis 0 and 1, only use main diagonal (attacked model = evaluated model)
+    Results = Results[np.arange(len(Models)), np.arange(len(Models))]  # Should be 2 * 9 * 7
+else:
+    Results = Results[np.newaxis]
+print('Results shape:', Results.shape)
+for i, model in enumerate(Models):
+    print('Results for model ' + model['model'] + ':')
+    print(Results[i])
 Results = Results.reshape(-1, Results.shape[-1])
 import matplotlib.pyplot as plt
-D_max = np.concatenate(([0.0, 0.0], Results[:,-4]))
-D_mean = np.concatenate(([0.0, 0.0], Results[:,-3]))
-ADE = np.concatenate(([0.043, 0.270], Results[:,0]))
+D_max = np.concatenate(([0.0], Results[:,-4]))
+D_mean = np.concatenate(([0.0], Results[:,-3]))
+ADE = np.concatenate(([1.612], Results[:,0])) #TODO: Change those values according to unperturbed results
 import scipy.stats as sp
 r2_d_max = sp.linregress(D_max, ADE)[2]
 r2_d_mean = sp.linregress(D_mean, ADE)[2]
@@ -136,12 +155,12 @@ print('R^2 for D_mean: ', r2_d_mean)
 
 # Plot ADE vs displacement_mean
 plt.figure(figsize=(4,4))
-plt.scatter(D_max[2:], ADE[2:], c='blue', label='$D_{max}$', marker='x')
-plt.scatter(D_mean[2:], ADE[2:], c='red', label='$D_{mean}$', marker='x')
-plt.scatter(D_max[:2], ADE[:2], c='black', marker='x')
+plt.scatter(D_max[1:], ADE[1:], c='blue', label='$D_{max}$', marker='x')
+plt.scatter(D_mean[1:], ADE[1:], c='red', label='$D_{mean}$', marker='x')
+plt.scatter(D_max[:1], ADE[:1], c='black', marker='x')
 plt.xlim([0, 0.9])
 plt.ylim([0, 4])
 plt.xlabel('Perturbation magnitude $D$ [m]')
 plt.ylabel('ADE [m]')
-plt.savefig('Figure_pert_impact_round.pdf')
+plt.savefig('Figure_pert_impact_highd.pdf')
 plt.close()

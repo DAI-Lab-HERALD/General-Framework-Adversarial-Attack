@@ -35,7 +35,7 @@ preturbation = {'attack': None,
                 'distance_threshold_future': 0.9,
                 'log_value_past': 2.5,
                 'log_value_future': 2.5,
-                'GT_data': 'no'}
+                'GT_data': 'full'}
 
 for attack in ['Adversarial_Control_Action']:
     for attacked_model in Models:
@@ -49,7 +49,7 @@ for attack in ['Adversarial_Control_Action']:
 # Select the spitting methods to be considered
 Splitters = [{'Type': 'no_split', 'repetition': 0, 'train_pert': False, 'test_pert': True}]
 # Select the metrics to be used
-Metrics = ['Collision_rate_indep']
+Metrics = ['Collision_GT_rate_indep']
 
 
 new_experiment.set_modules(Data_sets, Data_params, Splitters, Models, Metrics)
@@ -98,3 +98,7 @@ new_experiment.run()
 
 # Load results
 Results = new_experiment.load_results()
+
+import numpy as np
+np.set_printoptions(precision=5, suppress=True)
+Results = Results.squeeze() # Should be 18 * 2

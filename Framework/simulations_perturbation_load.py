@@ -11,8 +11,7 @@ new_experiment = Experiment(Experiment_name)
 
 
 # Select the models to be trained
-Models = [{'model': 'trajectron_salzmann_old','kwargs': {'seed': 0, 'predict_ego': False}},
-          {'model': 'adapt_aydemir','kwargs': {'seed': 42}}]
+Models = [{'model': 'trajectron_salzmann_old','kwargs': {'seed': 0, 'predict_ego': False}}]
 
 # Select the params for the datasets to be considered
 Data_params = [{'dt': 0.1, 'num_timesteps_in': (12,12), 'num_timesteps_out': (12, 12)}] 
@@ -20,7 +19,7 @@ Data_params = [{'dt': 0.1, 'num_timesteps_in': (12,12), 'num_timesteps_out': (12
 # Select the datasets
 Data_sets = []
 preturbation = {'attack': None,
-                'data_set_dict': {'scenario': 'RounD_round_about',  'max_num_agents': None, 't0_type': 'col_set', 'conforming_t0_types': []},
+                'data_set_dict': {'scenario': 'CoR_left_turns', 'max_num_agents': None, 't0_type': 'col_set', 'conforming_t0_types': []},
                 'data_param': Data_params[0],
                 'splitter_dict': {'Type': 'no_split', 'repetition': 0, 'train_pert': False, 'test_pert': False},
                 'model_dict': Models[0],
@@ -39,29 +38,27 @@ preturbation = {'attack': None,
                 'GT_data': 'no'}
 
 for attack in ['Adversarial_Control_Action']:
-    for attacked_model in Models:
-        for loss_function_1, loss_function_2 in [('ADE_Y_GT_Y_Pred_Max', None),
-                                                ('Collision_Y_pred_tar_Y_GT_ego', None),
-                                                ('Collision_Y_Perturb_tar_Y_GT_ego', 'ADE_Y_pred_and_Y_pred_iteration_1_Min')]:
-            for barrier_function_past in ['Time_Trajectory_specific']:
-                for barrier_function_future in [None, 'Trajectory_specific']:
-                    if barrier_function_future is not None:
-                        if loss_function_2 is not None:
-                            continue
-                    if barrier_function_future is None:
-                        if loss_function_2 is None:
-                            continue
-
-                    # Define specific perturbation
-                    perturbation_i = copy.deepcopy(preturbation)
-                    perturbation_i['attack'] = attack
-                    perturbation_i['model_dict'] = attacked_model
-                    perturbation_i['loss_function_1'] = loss_function_1
-                    perturbation_i['loss_function_2'] = loss_function_2
-                    perturbation_i['barrier_function_past'] = barrier_function_past
-                    perturbation_i['barrier_function_future'] = barrier_function_future
-                    dataset = {'scenario': 'RounD_round_about',  'max_num_agents': None, 't0_type': 'col_set', 'conforming_t0_types': [], 'perturbation': perturbation_i}
-                    Data_sets.append(dataset)
+    for loss_function_1, loss_function_2 in [('ADE_Y_GT_Y_Pred_Max', None),
+                                             ('FDE_Y_GT_Y_Pred_Max', None),
+                                             ('Collision_Y_pred_tar_Y_GT_ego', None)]:
+                                            #  ('Collision_Y_Perturb_tar_Y_GT_ego', 'ADE_Y_pred_and_Y_pred_iteration_1_Min')]:
+        for barrier_function_past in ['Time_specific', 'Time_Trajectory_specific']:
+            for barrier_function_future in ['Trajectory_specific']:
+                if barrier_function_future is not None:
+                    if attack != 'Adversarial_Control_Action':
+                        continue
+                    if loss_function_2 is not None:
+                        continue
+                
+                # Define specific perturbation
+                perturbation_i = copy.deepcopy(preturbation)
+                perturbation_i['attack'] = attack
+                perturbation_i['loss_function_1'] = loss_function_1
+                perturbation_i['loss_function_2'] = loss_function_2
+                perturbation_i['barrier_function_past'] = barrier_function_past
+                perturbation_i['barrier_function_future'] = barrier_function_future
+                dataset = {'scenario': 'CoR_left_turns',  'max_num_agents': None, 't0_type': 'col_set', 'conforming_t0_types': [], 'perturbation': perturbation_i}
+                Data_sets.append(dataset)
 
 # Select the spitting methods to be considered
 Splitters = [{'Type': 'no_split', 'repetition': 0, 'train_pert': False, 'test_pert': True}]
@@ -113,9 +110,8 @@ new_experiment.set_parameters(model_for_path_transform, num_samples_path_pred,
                               agents_to_predict, overwrite_results, 
                               save_predictions, evaluate_on_train_set)
 
-
 #%% Run experiment
-# new_experiment.run()
+new_experiment.run()
 
 # Load results
 Results = new_experiment.load_results()
@@ -123,11 +119,12 @@ Results = Results.squeeze() # Should be 12 * 7
 import numpy as np
 np.set_printoptions(precision=3, suppress=True)
 print(Results.shape)
-Results = Results.reshape(-1, Results.shape[-1])
 import matplotlib.pyplot as plt
-D_max = np.concatenate(([0.0, 0.0], Results[:,-4]))
-D_mean = np.concatenate(([0.0, 0.0], Results[:,-3]))
-ADE = np.concatenate(([0.043, 0.270], Results[:,0]))
+
+# Calculate coefficients of determination
+D_max = np.concatenate(([0.0], Results[:,-4]))
+D_mean = np.concatenate(([0.0], Results[:,-3]))
+ADE = np.concatenate(([0.115], Results[:,0]))
 import scipy.stats as sp
 r2_d_max = sp.linregress(D_max, ADE)[2]
 r2_d_mean = sp.linregress(D_mean, ADE)[2]
@@ -136,12 +133,14 @@ print('R^2 for D_mean: ', r2_d_mean)
 
 # Plot ADE vs displacement_mean
 plt.figure(figsize=(4,4))
-plt.scatter(D_max[2:], ADE[2:], c='blue', label='$D_{max}$', marker='x')
-plt.scatter(D_mean[2:], ADE[2:], c='red', label='$D_{mean}$', marker='x')
-plt.scatter(D_max[:2], ADE[:2], c='black', marker='x')
+plt.scatter(Results[:,-4], Results[:,0], c='blue', label='$D_{max}$', marker='x')
+plt.scatter(Results[:,-3], Results[:,0], c='red', label='$D_{mean}$', marker='x')
+# PLot the unpertrubed value
+plt.scatter(0.0, 0.115, c='black', marker='x')
+plt.legend()
 plt.xlim([0, 0.9])
 plt.ylim([0, 4])
 plt.xlabel('Perturbation magnitude $D$ [m]')
 plt.ylabel('ADE [m]')
-plt.savefig('Figure_pert_impact_round.pdf')
+plt.savefig('Figure_pert_impact.pdf')
 plt.close()

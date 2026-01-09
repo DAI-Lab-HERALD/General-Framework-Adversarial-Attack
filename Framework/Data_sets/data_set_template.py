@@ -3884,7 +3884,7 @@ class data_set_template():
         # Only keep non nan agents
         X_a = X[np.isfinite(X).all(-1)]
         assert len(X_a) > 0, "There are no agents in the scene."
-        X_a = X_a[np.newaxis, :] # shape = (1, num_agents, 2)
+        X_a = X_a[np.newaxis,...,:2] # shape = (1, num_agents, 2)
         
 
         # Get contents of loc_Graph

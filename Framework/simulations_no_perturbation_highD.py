@@ -3,52 +3,27 @@ import copy
 from experiment import Experiment
 
 # Draw latex figure
-Experiment_name = 'Perturbations_CR_FNC'
+Experiment_name = 'No Perturbations'
 new_experiment = Experiment(Experiment_name)
 
 
 #%% Select modules
-
-# Select the spitting methods to be considered
-Splitters = [{'Type': 'no_split', 'repetition': 0, 'train_pert': False, 'test_pert': True}]
-
 # Select the models to be trained
-Models = [{'model': 'trajectron_salzmann_old','kwargs': {'seed':0, 'predict_ego': False}}]
+Models = [{'model': 'trajectron_salzmann_old','kwargs': {'seed': 0, 'predict_ego': False}}, 'adapt_aydemir']
 
 # Select the params for the datasets to be considered
-Data_params = [{'dt': 0.1, 'num_timesteps_in': (12,12), 'num_timesteps_out': (12, 12)}] 
+Data_params = [{'dt': 0.2, 'num_timesteps_in': (12,12), 'num_timesteps_out': (25, 25)}]
 
 # Select the datasets
-Data_sets = []
-preturbation = {'attack': None,
-                'data_set_dict': {'scenario': 'CoR_left_turns', 'max_num_agents': None, 't0_type': 'col_set', 'conforming_t0_types': []},
-                'data_param': Data_params[0],
-                'splitter_dict': Splitters[0],
-                'model_dict': Models[0],
-                'num_samples_perturb': 20,
-                'max_number_iterations': 100,
-                'alpha': 0.01,
-                'gamma': 0.99,
-                'loss_function_1': 'Collision_Y_Perturb_tar_Y_GT_ego',
-                'loss_function_2': 'ADE_Y_pred_and_Y_pred_iteration_1_Min',
-                'barrier_function_past': None,
-                'barrier_function_future': None,
-                'distance_threshold_past': 0.9,
-                'distance_threshold_future': 0.9,
-                'log_value_past': 2.5,
-                'log_value_future': 2.5,
-                'GT_data': 'full'}
+Data_sets = [{'scenario': 'HighD_lane_change',  'max_num_agents': None, 't0_type': 'col_set', 'conforming_t0_types': []}]
 
-for attack in ['Adversarial_Control_Action', 'Adversarial_Position', 'Adversarial_Search']:
-    for barrier_function_past in ['Time_specific', 'Time_Trajectory_specific']:
-        # Define specific perturbation
-        perturbation_i = copy.deepcopy(preturbation)
-        perturbation_i['attack'] = attack
-        perturbation_i['barrier_function_past'] = barrier_function_past
-        dataset = {'scenario': 'CoR_left_turns',  'max_num_agents': None, 't0_type': 'col_set', 'conforming_t0_types': [], 'perturbation': perturbation_i}
-        Data_sets.append(dataset)
+
+# Select the spitting methods to be considered
+Splitters = [{'Type': 'no_split', 'repetition': 0, 'train_pert': False, 'test_pert': False}]
+
 # Select the metrics to be used
-Metrics = ['Collision_GT_rate_indep']
+Metrics = ['ADE20_indep', 'FDE20_indep', 'Collision_rate_indep', 
+           'Past_Acceleration_indep', 'Past_Curvature_indep']
 
 
 new_experiment.set_modules(Data_sets, Data_params, Splitters, Models, Metrics)
@@ -97,3 +72,5 @@ new_experiment.run()
 
 # Load results
 Results = new_experiment.load_results()
+
+print("Results:", Results.squeeze())
