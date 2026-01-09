@@ -734,9 +734,106 @@ class evaluation_template():
 
                         # Assign the path
                         Path_true_unperturbed[i_sample, i_agent] = path_agent[..., :2]
+            else:
+                # Get the current Index_saved and Scenario
+                Scenario, Index_saved = Domain[['Scenario', 'Index_saved']].values.T
+                # In Scenario, if there is a ending with " (Pertubation_***)", remove it
+                Scenario_unperturbed = np.array([s.split(' (Pertubation_')[0] for s in Scenario])
+
+                # Find the indices in self.data_set.Domain where the Scenario and Index_saved match
+                Scenario_all, Index_saved_all = self.data_set.Domain[['Scenario', 'Index_saved']].values.T
+                Scenario_match = (Scenario_unperturbed[:, np.newaxis] == Scenario_all[np.newaxis, :])
+                Index_saved_match = (Index_saved[:, np.newaxis] == Index_saved_all[np.newaxis, :])
+                Match = Scenario_match & Index_saved_match
+                if not (Match.sum(1) == 1).all():
+                    # Just use perturbed stuff
+                    Paths_true = [Path_true]
+                else:
+                    Sample_idc = np.tile(np.argmax(Match, 1, keepdims=True), (1,Pred_agent_id.shape[1]))
+                    Agent_idc = Pred_agent_id
+                    data_index, data_index_mask = self.model.get_orig_data_index(Sample_idc, Agent_idc)
+
+                    Path_true_unperturbed[data_index_mask] = self.data_set.X_orig[data_index].astype(np.float32)[..., :2]
             Paths_true = [Path_true, Path_true_unperturbed]
+
+        if return_types:
+            Types = self.model.T_pred
+            Types = Types[Use_samples]
+
+            Sizes = self.model.S_pred
+            Sizes = Sizes[Use_samples]
+            return *Paths_true, Pred_agent, Types, Sizes
         else:
-            Paths_true = [Path_true]
+            return *Paths_true, Pred_agent
+        
+    def get_true_future_paths(self, return_unperturbed = False, return_types = False):
+        self.model._transform_predictions_to_numpy(self.Index_curr, self.Output_path_pred,
+                                                   self.get_output_type() == 'path_all_wo_pov')
+        Path_true = self.model.Path_true[:,0]
+
+        # Get used samples
+        Pred_step = self.model.Pred_step
+        Pred_agent = Pred_step.any(-1)
+        Use_samples = Pred_agent.any(-1)
+
+        # Get the true past paths
+        Path_true = Path_true[Use_samples]
+        Pred_agent = Pred_agent[Use_samples]
+
+        if return_unperturbed:
+            Domain = self.data_set.Domain.iloc[self.Index_curr[Use_samples]]
+            Pred_agent_id = self.model.Pred_agent_id[Use_samples]
+            Path_true_unperturbed = Path_true.copy()
+            num_steps = Path_true_unperturbed.shape[-2]
+            # Check if Unperturbed_output column is in Domain
+            if 'Unperturbed_output' in Domain.columns:
+                Output_path = Domain['Unperturbed_output']
+
+                # Find rows where input_path is not nan or None
+                useful = Output_path.notna() & Output_path.notnull() & (Output_path != None)
+                useful_ind = np.where(useful)[0]
+                Output_path = Output_path[useful]
+                # Get corresponding Pred agent_id
+                Pred_agent_id = Pred_agent_id[useful_ind]
+
+                # get corresponding agent_name
+                Pred_agent_name = np.array(self.data_set.Agents)[Pred_agent_id] 
+
+                for i, i_sample in enumerate(useful_ind):
+                    # Get the corresponding agent name
+                    agent_names = Pred_agent_name[i]
+                    # Get the corresponding path
+                    path = Output_path.iloc[i][0] # pandas series
+
+                    # Go through agents
+                    for i_agent, agent_name in enumerate(agent_names):
+                        assert agent_name in path.index, f'Agent {agent_name} not in path {path.index}'
+                        # Get the path
+                        path_agent = path[agent_name]
+
+                        # Assign the path
+                        Path_true_unperturbed[i_sample, i_agent] = path_agent[..., :num_steps, :2]
+            else:
+                # Get the current Index_saved and Scenario
+                Scenario, Index_saved = Domain[['Scenario', 'Index_saved']].values.T
+                # In Scenario, if there is a ending with " (Pertubation_***)", remove it
+                Scenario_unperturbed = np.array([s.split(' (Pertubation_')[0] for s in Scenario])
+
+                # Find the indices in self.data_set.Domain where the Scenario and Index_saved match
+                Scenario_all, Index_saved_all = self.data_set.Domain[['Scenario', 'Index_saved']].values.T
+                Scenario_match = (Scenario_unperturbed[:, np.newaxis] == Scenario_all[np.newaxis, :])
+                Index_saved_match = (Index_saved[:, np.newaxis] == Index_saved_all[np.newaxis, :])
+                Match = Scenario_match & Index_saved_match
+                if not (Match.sum(1) == 1).all():
+                    # Just use perturbed stuff
+                    Paths_true = [Path_true]
+                else:
+                    Sample_idc = np.tile(np.argmax(Match, 1, keepdims=True), (1,Pred_agent_id.shape[1]))
+                    Agent_idc = Pred_agent_id
+                    data_index, data_index_mask = self.model.get_orig_data_index(Sample_idc, Agent_idc)
+
+                    Path_true_unperturbed[data_index_mask] = self.data_set.Y_orig[data_index].astype(np.float32)[..., :num_steps, :2]
+            Paths_true = [Path_true, Path_true_unperturbed]
 
         if return_types:
             Types = self.model.T_pred
