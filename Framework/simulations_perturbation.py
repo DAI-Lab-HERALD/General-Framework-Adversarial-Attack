@@ -115,3 +115,36 @@ new_experiment.run()
 
 # Load results
 Results = new_experiment.load_results()
+Results = Results.squeeze() # Should be 30 * 7
+# Only plot Adversarial Control attack
+Results = Results[:14] # Should be 14 * 7
+# Do not plot the FNC attack, as this has a different goal and thus not part of the d vs ADE analysis
+Results = Results[:12] # Should be 12 * 7
+import numpy as np
+np.set_printoptions(precision=3, suppress=True)
+print(Results.shape)
+import matplotlib.pyplot as plt
+
+# Calculate coefficients of determination
+D_max = np.concatenate(([0.0], Results[:,-4]))
+D_mean = np.concatenate(([0.0], Results[:,-3]))
+ADE = np.concatenate(([0.115], Results[:,0]))
+import scipy.stats as sp
+r2_d_max = sp.linregress(D_max, ADE)[2]
+r2_d_mean = sp.linregress(D_mean, ADE)[2]
+print('R^2 for D_max: ', r2_d_max)
+print('R^2 for D_mean: ', r2_d_mean)
+
+# Plot ADE vs displacement_mean
+plt.figure(figsize=(4,4))
+plt.scatter(Results[:,-4], Results[:,0], c='blue', label='$D_{max}$', marker='x')
+plt.scatter(Results[:,-3], Results[:,0], c='red', label='$D_{mean}$', marker='x')
+# PLot the unpertrubed value
+plt.scatter(0.0, 0.115, c='black', marker='x')
+plt.legend()
+plt.xlim([0, 0.9])
+plt.ylim([0, 4])
+plt.xlabel('Perturbation magnitude $D$ [m]')
+plt.ylabel('ADE [m]')
+plt.savefig('Figure_pert_impact.pdf')
+plt.close()

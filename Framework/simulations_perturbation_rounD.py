@@ -115,7 +115,7 @@ new_experiment.set_parameters(model_for_path_transform, num_samples_path_pred,
 
 
 #%% Run experiment
-# new_experiment.run()
+new_experiment.run()
 
 # Load results
 Results = new_experiment.load_results()
