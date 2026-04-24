@@ -26,6 +26,6 @@ To generate the resulting metric values reported in the paper, one has to do the
     - To get the main metrics on the perturbed data, run [simulations_perturbation_rounD.py](https://github.com/DAI-Lab-HERALD/General-Framework-Adversarial-Attack/blob/main/Framework/simulations_perturbation_rounD.py). 
     - To get the $CR_{FNC}$ metric on the perturbed data, run [simulations_perturbation_CR_FNC_rounD.py](https://github.com/DAI-Lab-HERALD/General-Framework-Adversarial-Attack/blob/main/Framework/simulations_perturbation_rounD.py). 
 
-A compressed version of the Results folder with all the perturbated data, predictions, and metrics can be found at 4TU.ResearchData. Simply extract the *Results.zip* file in the [Framework folder](https://github.com/DAI-Lab-HERALD/General-Framework-Adversarial-Attack/tree/main/Framework).
+A compressed version of the Results folder with all the perturbated data, predictions, and metrics can be found at [4TU.ResearchData](https://data.4tu.nl/datasets/07d03003-5c7c-407f-bfb2-078df2e02b7f). Simply extract the [*Results.zip*](https://data.4tu.nl/file/07d03003-5c7c-407f-bfb2-078df2e02b7f/9e82a1c1-fef0-432d-9655-540b8d3a51ca) file in the [Framework folder](https://github.com/DAI-Lab-HERALD/General-Framework-Adversarial-Attack/tree/main/Framework).
 
 
